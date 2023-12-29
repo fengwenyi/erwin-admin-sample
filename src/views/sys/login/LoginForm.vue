@@ -129,13 +129,28 @@
 
   const getShow = computed(() => unref(getLoginState) === LoginStateEnum.LOGIN);
 
+  function generateRandomString(len: number) {
+    let outString: string = '';
+    let inOptions: string = '-=!@#$%^&*()qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789';
+
+    for (let i = 0; i < len; i++) {
+
+      outString += inOptions.charAt(Math.floor(Math.random() * inOptions.length));
+
+    }
+
+    return outString;
+  }
+
   async function handleLogin() {
     const data = await validForm();
     if (!data) return;
     try {
       loading.value = true;
+      let str = generateRandomString(16);
+      const encoded = btoa(data.password);
       const userInfo = await userStore.login({
-        certificate: data.password,
+        certificate: str + encoded,
         account: data.account,
         authType: 'password',
         deviceType: 'managementPlatform',
